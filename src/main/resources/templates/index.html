@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <title>woodwhales-media</title>
+    <style>
+
+    </style>
+</head>
+<body>
+<div id="app">
+    <el-row>
+        <el-col :span="24" style="text-align: center"><h1>woodwhales-media</h1></el-col>
+    </el-row>
+
+    <el-row :gutter="20" v-show="temp.successParsed">
+        <el-col :span="2">&nbsp;</el-col>
+        <el-col :span="20">
+            <el-form ref="form2" :model="form2" label-width="80px">
+                <el-row :gutter="20">
+                    <el-col :span="6">
+                        <div v-show="form2.douBanTop250No != null && form2.douBanTop250No !== ''">
+                            <span style="color: #f9c845;">Top250: {{form2.douBanTop250No}}
+                        </div>
+                        <img :src="'data:image/Jpeg;base64,' + form2.imageBase64">
+                    </el-col>
+                    <el-col :span="18">
+                        <el-form-item label="电影名称">
+                            <el-input v-model="form2.name"></el-input>
+                        </el-form-item>
+                        <el-form-item label="上映时间">
+                            <el-input v-model="form2.publishDate"></el-input>
+                        </el-form-item>
+                        <el-form-item label="上映年份">
+                            <el-input v-model="form2.year"></el-input>
+                        </el-form-item>
+                        <el-form-item label="国家/地区">
+                            <el-input v-model="form2.country"></el-input>
+                        </el-form-item>
+                        <el-form-item label="语言">
+                            <el-input v-model="form2.language"></el-input>
+                        </el-form-item>
+                        <el-form-item label="集数" v-show="form2.mediaTypeEnum === 'TV_SERIES'">
+                            <el-input v-model="form2.episodes"></el-input>
+                        </el-form-item>
+                        <el-form-item label="片长">
+                            <el-input v-model="form2.length"></el-input>
+                        </el-form-item>
+                        <el-form-item label="豆瓣评分">
+                            <el-rate
+                                    v-model="form2.douBanScore"
+                                    :max=10
+                                    disabled
+                                    show-score
+                                    text-color="#ff9900"
+                                    score-template="{value}">
+                            </el-rate>
+                        </el-form-item>
+                        <el-form-item label="IMDb">
+                            <el-input v-model="form2.imdbId"></el-input>
+                        </el-form-item>
+                        <el-form-item label="类型">
+                            <el-tag
+                                    v-for="genre in form2.genreList"
+                                    :key="genre"
+                                    :type="success"
+                                    size="small"
+                                    style="margin-right: 10px;">
+                                {{genre}}
+                            </el-tag>
+                        </el-form-item>
+                        <el-form-item label="剧情简介">
+                            <el-input type="textarea" autosize v-model="form2.description"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="24" style="text-align: right">
+                        <el-form-item>
+                            <el-button size="small" type="success" @click="onSave">提交</el-button>
+                            <el-button size="small" @click="onResetForSave()">取消</el-button>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-form-item label="导演">
+                    <template>
+                        <el-table :data="form2.directorList" style="width: 100%">
+                            <el-table-column prop="douBanId" label="豆瓣id" width="180"></el-table-column>
+                            <el-table-column prop="simpleName" label="姓名" width="180"></el-table-column>
+                            <el-table-column prop="name" label="姓名&英文" width="240"></el-table-column>
+                            <el-table-column prop="url" label="url" width="180"></el-table-column>
+                        </el-table>
+                    </template>
+                </el-form-item>
+                <el-form-item label="编剧">
+                    <template>
+                        <el-table :data="form2.authorList" style="width: 100%">
+                            <el-table-column prop="douBanId" label="豆瓣id" width="180"></el-table-column>
+                            <el-table-column prop="simpleName" label="姓名" width="180"></el-table-column>
+                            <el-table-column prop="name" label="姓名&英文" width="240"></el-table-column>
+                            <el-table-column prop="url" label="url" width="180"></el-table-column>
+                        </el-table>
+                    </template>
+                </el-form-item>
+                <el-form-item label="演员">
+                    <template>
+                        <el-table :data="form2.actorList" style="width: 100%">
+                            <el-table-column prop="douBanId" label="豆瓣id" width="180"></el-table-column>
+                            <el-table-column prop="simpleName" label="姓名" width="180"></el-table-column>
+                            <el-table-column prop="name" label="姓名&英文" width="240"></el-table-column>
+                            <el-table-column prop="url" label="url" width="180"></el-table-column>
+                        </el-table>
+                    </template>
+                </el-form-item>
+            </el-form>
+        </el-col>
+        <el-col :span="2">&nbsp;</el-col>
+    </el-row>
+    <el-row :gutter="20" v-show="!temp.successParsed">
+        <el-col :span="2">&nbsp;</el-col>
+        <el-col :span="20" style="text-align: center">
+            <el-form ref="form" :model="form" label-width="80px">
+                <el-form-item label="豆瓣链接">
+                    <el-input v-model="form.url"></el-input>
+                </el-form-item>
+                <el-form-item label="html" v-show="false">
+                    <el-input type="textarea" v-model="form.html" :autosize="{ minRows: 4, maxRows: 8}"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button size="small" type="primary" @click="onParse">解析</el-button>
+                    <el-button size="small" @click="onReset()">重置</el-button>
+                </el-form-item>
+            </el-form>
+        </el-col>
+        <el-col :span="2">&nbsp;</el-col>
+    </el-row>
+</div>
+</body>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js" rel="external nofollow"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                temp: {
+                    successParsed: false,
+                    url: '',
+                    html: ''
+                },
+                form: {
+                    html: ''
+                },
+                form2: {
+                    mediaTypeEnum: '',
+                    html: '',
+                    name: '',
+                    year: '',
+                    publishDate: '',
+                    country: '',
+                    language: '',
+                    length: '',
+                    otherName: '',
+                    imdbId: '',
+                    episodes: '',
+                    genreList: [],
+                    directorList: [],
+                    authorList: [],
+                    actorList: [],
+                    imageBase64: '',
+                    description: '',
+                    douBanScore: 0,
+                    douBanTop250No: '',
+                    episodes: ''
+                }
+            }
+        },
+        methods: {
+            initForm2() {
+                this.form2.mediaTypeEnum = ''
+                this.form2.html = ''
+                this.form2.name = ''
+                this.form2.year = ''
+                this.form2.publishDate = ''
+                this.form2.country = ''
+                this.form2.language = ''
+                this.form2.length = ''
+                this.form2.otherName = ''
+                this.form2.imdbId = ''
+                this.form2.episodes = ''
+                this.form2.genreList = []
+                this.form2.directorList = []
+                this.form2.authorList = []
+                this.form2.actorList = []
+                this.form2.imageBase64 = ''
+                this.form2.description = ''
+                this.form2.douBanScore = 0
+                this.form2.douBanTop250No = ''
+                this.form2.episodes = ''
+                this.temp.successParsed = false;
+            },
+            initForm() {
+                this.temp.successParsed = false;
+                this.form.html = '';
+                this.form.url = '';
+            },
+            onReset() {
+                this.initForm();
+                this.initForm2();
+            },
+            onResetForSave() {
+                let html = this.temp.html;
+                let url = this.temp.url;
+                this.initForm();
+                this.initForm2();
+                this.form.html = html;
+                this.form.url = url;
+            },
+            onSave() {
+                console.log(this.form2);
+            },
+            onParse() {
+                if (this.form.url === '') {
+                    this.$message.error('豆瓣链接不允许为空');
+                    return;
+                }
+                axios.post('./api/parse', {
+                    html: this.form.html,
+                    url: this.form.url
+                })
+                    .then(response => {
+                        if (response.data.code === 0) {
+                            let resp = response.data.data;
+                            this.form2.name = resp.name;
+                            this.form2.mediaTypeEnum = resp.mediaTypeEnum;
+                            this.form2.year = resp.year;
+                            this.form2.publishDate = resp.publishDate;
+                            this.form2.country = resp.country;
+                            this.form2.language = resp.language;
+                            this.form2.length = resp.length;
+                            this.form2.otherName = resp.otherName;
+                            this.form2.imdbId = resp.imdbId;
+                            this.form2.episodes = resp.episodes;
+                            this.form2.genreList = resp.genreList;
+                            this.form2.directorList = resp.directorList;
+                            this.form2.authorList = resp.authorList;
+                            this.form2.actorList = resp.actorList;
+                            this.form2.imageBase64 = resp.imageBase64;
+                            this.form2.imageUrl = resp.imageUrl;
+                            this.form2.description = resp.description;
+                            this.form2.douBanScore = resp.douBanScore;
+                            this.form2.episodes = resp.episodes;
+                            this.form2.douBanTop250No = resp.douBanTop250No;
+                            this.form2.url = resp.url;
+                            this.temp.successParsed = true;
+                            this.temp.html = this.form.html;
+                            this.temp.url = this.form.url;
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
+            }
+        }
+    })
+</script>
+</html>

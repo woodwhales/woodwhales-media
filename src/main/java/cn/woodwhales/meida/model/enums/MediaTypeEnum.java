@@ -18,6 +18,7 @@ public enum MediaTypeEnum {
      * 电影
      */
     MOVIE(0, "电影"),
+    TV_SERIES(1, "电视剧"),
     ;
 
     /**

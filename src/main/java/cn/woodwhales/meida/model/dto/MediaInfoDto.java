@@ -17,9 +17,25 @@ public class MediaInfoDto {
     private MediaTypeEnum mediaTypeEnum;
 
     /**
+     * 豆瓣链接
+     */
+    private String url;
+
+    /**
+     * 海报链接
+     */
+    private String imageUrl;
+
+    /**
+     * 图片base64
+     */
+    private String imageBase64;
+
+    /**
      * 作品名称
      */
     private String name;
+
     /**
      * 发布时间年份
      */
@@ -48,7 +64,17 @@ public class MediaInfoDto {
     private Integer length;
 
     /**
-     * 别名
+     * 豆瓣评分
+     */
+    private Double douBanScore;
+
+    /**
+     * 豆瓣Top250排名
+     */
+    private String douBanTop250No;
+
+    /**
+     * 又名
      */
     private String otherName;
 
@@ -61,12 +87,29 @@ public class MediaInfoDto {
      * 集数
      */
     private Integer episodes;
+
+    /**
+     * 简述
+     */
+    private String description;
+
+    /**
+     * 类型列表
+     */
+    private List<String> genreList;
+
     /**
      * 导演集合
      */
-    private List<String> directorList;
+    private List<MediaPersonDto> directorList;
+
     /**
-     * 主演集合
+     * 编剧集合
      */
-    private List<String> starringList;
+    private List<MediaPersonDto> authorList;
+
+    /**
+     * 演员集合
+     */
+    private List<MediaPersonDto> actorList;
 }

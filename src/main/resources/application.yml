@@ -2,6 +2,8 @@ server:
   address: 0.0.0.0
   port: 9678
 spring:
+  thymeleaf:
+    cache: false
   application:
     name: woodwhales-media
   jackson:
