@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -56,7 +57,7 @@ public class DouBanParseMediaServiceImpl implements ParseMediaService {
         }
 
         // 电影名称
-        String name = jsonObject.get("name").toString();
+        String name = StringEscapeUtils.unescapeHtml4(jsonObject.get("name").toString());
 
         // 导演列表
         List<Map<String, String>> directorList = JSONArray.parseObject(JSON.toJSONString(jsonObject.get("director")), List.class);

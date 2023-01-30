@@ -378,12 +378,14 @@
                 this.form.url = url;
             },
             onSave() {
-                let success = false;
                 axios.post('./api/saveOrUpdate', this.form2)
                     .then(response => {
                         if (response.data.code === 0) {
-                            success = true;
                             this.$message.success(response.data.msg);
+                            this.onResetForSave();
+                            this.onReset();
+                            this.temp.activeName = 'page';
+                            this.queryPage();
                         } else {
                             this.$message.success(response.data.msg);
                         }
@@ -392,12 +394,6 @@
                         this.$message.error('网络异常');
                         console.log(error);
                     });
-                if(success) {
-                    this.temp.activeName = 'page';
-                    this.queryPage();
-                    this.onResetForSave();
-                    this.onReset();
-                }
             },
             onParse() {
                 if (this.form.url === '') {

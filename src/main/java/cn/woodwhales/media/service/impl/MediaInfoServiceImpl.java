@@ -203,6 +203,7 @@ public class MediaInfoServiceImpl extends ServiceImpl<MediaInfoMapper, MediaInfo
     public RespVO<PageRespVO<MediaInfoPageVo>> queryPage(PageParam<MediaInfoPageParam> pageParam) {
         return MybatisPlusExecutor.page(this, pageParam, wrapper -> {
             wrapper.like(MediaInfo::getName, pageParam.getParam().getName());
+            wrapper.orderByDesc(MediaInfo::getUpdateTime);
         }, info -> BeanTool.copy(info, MediaInfoPageVo::new));
 
     }
