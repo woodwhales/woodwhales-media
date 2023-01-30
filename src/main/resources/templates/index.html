@@ -229,7 +229,14 @@
                 this.form.url = url;
             },
             onSave() {
-                console.log(this.form2);
+                axios.post('./api/saveOrUpdate', this.form2)
+                    .then(response => {
+                        console.log(response.data)
+                    })
+                    .catch(function (error) {
+                        this.$message.error('网络异常');
+                        console.log(error);
+                    });
             },
             onParse() {
                 if (this.form.url === '') {
@@ -240,8 +247,8 @@
                     html: this.form.html,
                     url: this.form.url
                 }).then(response => {
+                    let resp = response.data.data;
                         if (response.data.code === 0) {
-                            let resp = response.data.data;
                             this.form2.name = resp.name;
                             this.form2.mediaTypeEnum = resp.mediaTypeEnum;
                             this.form2.year = resp.year;
@@ -266,11 +273,12 @@
                             this.temp.successParsed = true;
                             this.temp.html = this.form.html;
                             this.temp.url = this.form.url;
-                            let b = this.form2.douBanTop250No != null && this.form2.douBanTop250No !== '';
-                            console.log(b)
+                        } else {
+                            this.$message.error(response.data.msg);
                         }
                     })
                     .catch(function (error) {
+                        this.$message.error('网络异常');
                         console.log(error);
                     });
 
