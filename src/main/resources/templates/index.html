@@ -6,7 +6,10 @@
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <title>woodwhales-media</title>
     <style>
-
+        #douBan-top250:hover {
+            color: #FFFACD;
+            text-decoration:none;
+        }
     </style>
 </head>
 <body>
@@ -20,12 +23,6 @@
         <el-col :span="20">
             <el-form ref="form2" :model="form2" label-width="80px">
                 <el-row :gutter="20">
-                    <el-col :span="6">
-                        <div v-show="form2.douBanTop250No != null && form2.douBanTop250No !== ''">
-                            <span style="color: #f9c845;">Top250: {{form2.douBanTop250No}}
-                        </div>
-                        <img :src="'data:image/Jpeg;base64,' + form2.imageBase64">
-                    </el-col>
                     <el-col :span="18">
                         <el-form-item label="电影名称">
                             <el-input v-model="form2.name"></el-input>
@@ -65,7 +62,7 @@
                             <el-tag
                                     v-for="genre in form2.genreList"
                                     :key="genre"
-                                    :type="success"
+                                    type="success"
                                     size="small"
                                     style="margin-right: 10px;">
                                 {{genre}}
@@ -75,9 +72,20 @@
                             <el-input type="textarea" autosize v-model="form2.description"></el-input>
                         </el-form-item>
                     </el-col>
+                    <el-col :span="6">
+                        <template v-if="form2.douBanTop250No != null && form2.douBanTop250No !== ''">
+                            <div style="margin-bottom: 8px;">
+                                <el-link :underline="false" style="padding: 2px 10px;
+                                            border: #FFFACD 1px solid;
+                                            border-radius: 5px;
+                                            background-color: #FFD700;" id="douBan-top250" href="https://movie.douban.com/top250" target="_blank">Top250: {{form2.douBanTop250No}}</el-link>
+                            </div>
+                        </template>
+                        <img :src="'data:image/Jpeg;base64,' + form2.imageBase64">
+                    </el-col>
                 </el-row>
                 <el-row :gutter="20">
-                    <el-col :span="24" style="text-align: right">
+                    <el-col :span="24">
                         <el-form-item>
                             <el-button size="small" type="success" @click="onSave">提交</el-button>
                             <el-button size="small" @click="onResetForSave()">取消</el-button>
@@ -142,7 +150,7 @@
 <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
 <!-- import JavaScript -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js" rel="external nofollow"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
     new Vue({
         el: '#app',
@@ -175,8 +183,7 @@
                     imageBase64: '',
                     description: '',
                     douBanScore: 0,
-                    douBanTop250No: '',
-                    episodes: ''
+                    douBanTop250No: ''
                 }
             }
         },
@@ -232,8 +239,7 @@
                 axios.post('./api/parse', {
                     html: this.form.html,
                     url: this.form.url
-                })
-                    .then(response => {
+                }).then(response => {
                         if (response.data.code === 0) {
                             let resp = response.data.data;
                             this.form2.name = resp.name;
@@ -260,6 +266,8 @@
                             this.temp.successParsed = true;
                             this.temp.html = this.form.html;
                             this.temp.url = this.form.url;
+                            let b = this.form2.douBanTop250No != null && this.form2.douBanTop250No !== '';
+                            console.log(b)
                         }
                     })
                     .catch(function (error) {
