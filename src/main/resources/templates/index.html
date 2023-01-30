@@ -23,7 +23,9 @@
         <el-col :span="20">
             <el-tabs v-model="temp.activeName" @tab-click="handleClick">
                 <el-tab-pane label="豆瓣解析" name="parse">
-                    <el-row style="margin-top: 25px;">
+                    <el-row style="margin-top: 25px;"
+                            v-loading="temp.loading"
+                            element-loading-spinner="el-icon-loading">
                         <el-row :gutter="20" v-show="temp.successParsed">
                             <el-col :span="2">&nbsp;</el-col>
                             <el-col :span="20">
@@ -236,7 +238,6 @@
         </el-col>
         <el-col :span="2">&nbsp;</el-col>
     </el-row>
-
 </div>
 </body>
 <!-- import Vue before Element -->
@@ -253,7 +254,8 @@
                     successParsed: false,
                     url: '',
                     html: '',
-                    activeName: 'parse'
+                    activeName: 'parse',
+                    loading: false
                 },
                 form: {
                     html: ''
@@ -336,6 +338,9 @@
                 if('page' === tab.name) {
                     this.queryPage();
                 }
+                if('parse' === tab.name) {
+                    this.temp.loading = false;
+                }
             },
             initForm2() {
                 this.form2.mediaTypeEnum = ''
@@ -400,6 +405,7 @@
                     this.$message.error('豆瓣链接不允许为空');
                     return;
                 }
+                this.temp.loading = true;
                 axios.post('./api/parse', {
                     html: this.form.html,
                     url: this.form.url
@@ -430,11 +436,14 @@
                         this.temp.successParsed = true;
                         this.temp.html = this.form.html;
                         this.temp.url = this.form.url;
+                        this.temp.loading = false;
                     } else {
+                        this.temp.loading = false;
                         this.$message.error(response.data.msg);
                     }
                 })
                 .catch(function (error) {
+                    this.temp.loading = false;
                     this.$message.error('网络异常');
                     console.log(error);
                 });
