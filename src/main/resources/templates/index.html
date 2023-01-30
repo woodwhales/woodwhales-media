@@ -43,7 +43,9 @@
                             <el-input v-model="form2.episodes"></el-input>
                         </el-form-item>
                         <el-form-item label="片长">
-                            <el-input v-model="form2.length"></el-input>
+                            <el-input v-model="form2.length">
+                                <template slot="append">分钟</template>
+                            </el-input>
                         </el-form-item>
                         <el-form-item label="豆瓣评分">
                             <el-rate
