@@ -8,7 +8,7 @@
     <style>
         #douBan-top250:hover {
             color: #FFFACD;
-            text-decoration:none;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -18,134 +18,225 @@
         <el-col :span="24" style="text-align: center"><h1>woodwhales-media</h1></el-col>
     </el-row>
 
-    <el-row :gutter="20" v-show="temp.successParsed">
+    <el-row>
         <el-col :span="2">&nbsp;</el-col>
         <el-col :span="20">
-            <el-form ref="form2" :model="form2" label-width="80px">
-                <el-row :gutter="20">
-                    <el-col :span="18">
-                        <el-form-item label="电影名称">
-                            <el-input v-model="form2.name"></el-input>
-                        </el-form-item>
-                        <el-form-item label="上映时间">
-                            <el-input v-model="form2.publishDate"></el-input>
-                        </el-form-item>
-                        <el-form-item label="上映年份">
-                            <el-input v-model="form2.year"></el-input>
-                        </el-form-item>
-                        <el-form-item label="国家/地区">
-                            <el-input v-model="form2.country"></el-input>
-                        </el-form-item>
-                        <el-form-item label="语言">
-                            <el-input v-model="form2.language"></el-input>
-                        </el-form-item>
-                        <el-form-item label="集数" v-show="form2.mediaTypeEnum === 'TV_SERIES'">
-                            <el-input v-model="form2.episodes"></el-input>
-                        </el-form-item>
-                        <el-form-item label="片长">
-                            <el-input v-model="form2.length">
-                                <template slot="append">分钟</template>
-                            </el-input>
-                        </el-form-item>
-                        <el-form-item label="豆瓣评分">
-                            <el-rate
-                                    v-model="form2.douBanScore"
-                                    :max=10
-                                    disabled
-                                    show-score
-                                    text-color="#ff9900"
-                                    score-template="{value}">
-                            </el-rate>
-                        </el-form-item>
-                        <el-form-item label="IMDb">
-                            <el-input v-model="form2.imdbId"></el-input>
-                        </el-form-item>
-                        <el-form-item label="类型">
-                            <el-tag
-                                    v-for="genre in form2.genreList"
-                                    :key="genre"
-                                    type="success"
-                                    size="small"
-                                    style="margin-right: 10px;">
-                                {{genre}}
-                            </el-tag>
-                        </el-form-item>
-                        <el-form-item label="剧情简介">
-                            <el-input type="textarea" autosize v-model="form2.description"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <template v-if="form2.douBanTop250No != null && form2.douBanTop250No !== ''">
-                            <div style="margin-bottom: 8px;">
-                                <el-link :underline="false" style="padding: 2px 10px;
-                                            border: #FFFACD 1px solid;
-                                            border-radius: 5px;
-                                            background-color: #FFD700;" id="douBan-top250" href="https://movie.douban.com/top250" target="_blank">Top250: {{form2.douBanTop250No}}</el-link>
-                            </div>
-                        </template>
-                        <img :src="'data:image/Jpeg;base64,' + form2.imageBase64">
-                    </el-col>
-                </el-row>
-                <el-row :gutter="20">
-                    <el-col :span="24">
-                        <el-form-item>
-                            <el-button size="small" type="success" @click="onSave">提交</el-button>
-                            <el-button size="small" @click="onResetForSave()">取消</el-button>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-form-item label="导演">
-                    <template>
-                        <el-table :data="form2.directorList" style="width: 100%">
-                            <el-table-column prop="douBanId" label="豆瓣id" width="180"></el-table-column>
-                            <el-table-column prop="simpleName" label="姓名" width="180"></el-table-column>
-                            <el-table-column prop="name" label="姓名&英文" width="240"></el-table-column>
-                            <el-table-column prop="url" label="url" width="180"></el-table-column>
-                        </el-table>
-                    </template>
-                </el-form-item>
-                <el-form-item label="编剧">
-                    <template>
-                        <el-table :data="form2.authorList" style="width: 100%">
-                            <el-table-column prop="douBanId" label="豆瓣id" width="180"></el-table-column>
-                            <el-table-column prop="simpleName" label="姓名" width="180"></el-table-column>
-                            <el-table-column prop="name" label="姓名&英文" width="240"></el-table-column>
-                            <el-table-column prop="url" label="url" width="180"></el-table-column>
-                        </el-table>
-                    </template>
-                </el-form-item>
-                <el-form-item label="演员">
-                    <template>
-                        <el-table :data="form2.actorList" style="width: 100%">
-                            <el-table-column prop="douBanId" label="豆瓣id" width="180"></el-table-column>
-                            <el-table-column prop="simpleName" label="姓名" width="180"></el-table-column>
-                            <el-table-column prop="name" label="姓名&英文" width="240"></el-table-column>
-                            <el-table-column prop="url" label="url" width="180"></el-table-column>
-                        </el-table>
-                    </template>
-                </el-form-item>
-            </el-form>
+            <el-tabs v-model="temp.activeName" @tab-click="handleClick">
+                <el-tab-pane label="豆瓣解析" name="parse">
+                    <el-row style="margin-top: 25px;">
+                        <el-row :gutter="20" v-show="temp.successParsed">
+                            <el-col :span="2">&nbsp;</el-col>
+                            <el-col :span="20">
+                                <el-form ref="form2" :model="form2" label-width="80px">
+                                    <el-row :gutter="20">
+                                        <el-col :span="18">
+                                            <el-form-item label="电影名称">
+                                                <el-input v-model="form2.name"></el-input>
+                                            </el-form-item>
+                                            <el-form-item label="上映时间">
+                                                <el-input v-model="form2.publishDate"></el-input>
+                                            </el-form-item>
+                                            <el-form-item label="上映年份">
+                                                <el-input v-model="form2.year"></el-input>
+                                            </el-form-item>
+                                            <el-form-item label="国家/地区">
+                                                <el-input v-model="form2.country"></el-input>
+                                            </el-form-item>
+                                            <el-form-item label="语言">
+                                                <el-input v-model="form2.language"></el-input>
+                                            </el-form-item>
+                                            <el-form-item label="集数" v-show="form2.mediaTypeEnum === 'TV_SERIES'">
+                                                <el-input v-model="form2.episodes"></el-input>
+                                            </el-form-item>
+                                            <el-form-item label="片长">
+                                                <el-input v-model="form2.length">
+                                                    <template slot="append">分钟</template>
+                                                </el-input>
+                                            </el-form-item>
+                                            <el-form-item label="豆瓣评分">
+                                                <el-rate
+                                                        v-model="form2.douBanScore"
+                                                        :max=10
+                                                        disabled
+                                                        show-score
+                                                        text-color="#ff9900"
+                                                        score-template="{value}">
+                                                </el-rate>
+                                            </el-form-item>
+                                            <el-form-item label="IMDb">
+                                                <el-input v-model="form2.imdbId"></el-input>
+                                            </el-form-item>
+                                            <el-form-item label="类型">
+                                                <el-tag
+                                                        v-for="genre in form2.genreList"
+                                                        :key="genre"
+                                                        type="success"
+                                                        size="small"
+                                                        style="margin-right: 10px;">
+                                                    {{genre}}
+                                                </el-tag>
+                                            </el-form-item>
+                                            <el-form-item label="剧情简介">
+                                                <el-input type="textarea" autosize v-model="form2.description"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="6">
+                                            <template v-if="form2.douBanTop250No != null && form2.douBanTop250No !== ''">
+                                                <div style="margin-bottom: 8px;">
+                                                    <el-link :underline="false" style="padding: 2px 10px;
+                                                border: #FFFACD 1px solid;
+                                                border-radius: 5px;
+                                                background-color: #FFD700;" id="douBan-top250"
+                                                             href="https://movie.douban.com/top250" target="_blank">Top250:
+                                                        {{form2.douBanTop250No}}
+                                                    </el-link>
+                                                </div>
+                                            </template>
+                                            <img :src="'data:image/Jpeg;base64,' + form2.imageBase64">
+                                        </el-col>
+                                    </el-row>
+                                    <el-row :gutter="20">
+                                        <el-col :span="24">
+                                            <el-form-item>
+                                                <el-button size="small" type="success" @click="onSave">提交</el-button>
+                                                <el-button size="small" @click="onResetForSave()">取消</el-button>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-form-item label="导演">
+                                        <template>
+                                            <el-table :data="form2.directorList" style="width: 100%">
+                                                <el-table-column prop="douBanId" label="豆瓣id"
+                                                                 width="180"></el-table-column>
+                                                <el-table-column prop="simpleName" label="姓名"
+                                                                 width="180"></el-table-column>
+                                                <el-table-column prop="name" label="姓名&英文"
+                                                                 width="240"></el-table-column>
+                                                <el-table-column prop="url" label="url" width="180"></el-table-column>
+                                            </el-table>
+                                        </template>
+                                    </el-form-item>
+                                    <el-form-item label="编剧">
+                                        <template>
+                                            <el-table :data="form2.authorList" style="width: 100%">
+                                                <el-table-column prop="douBanId" label="豆瓣id"
+                                                                 width="180"></el-table-column>
+                                                <el-table-column prop="simpleName" label="姓名"
+                                                                 width="180"></el-table-column>
+                                                <el-table-column prop="name" label="姓名&英文"
+                                                                 width="240"></el-table-column>
+                                                <el-table-column prop="url" label="url" width="180"></el-table-column>
+                                            </el-table>
+                                        </template>
+                                    </el-form-item>
+                                    <el-form-item label="演员">
+                                        <template>
+                                            <el-table :data="form2.actorList" style="width: 100%">
+                                                <el-table-column prop="douBanId" label="豆瓣id"
+                                                                 width="180"></el-table-column>
+                                                <el-table-column prop="simpleName" label="姓名"
+                                                                 width="180"></el-table-column>
+                                                <el-table-column prop="name" label="姓名&英文"
+                                                                 width="240"></el-table-column>
+                                                <el-table-column prop="url" label="url" width="180"></el-table-column>
+                                            </el-table>
+                                        </template>
+                                    </el-form-item>
+                                </el-form>
+                            </el-col>
+                            <el-col :span="2">&nbsp;</el-col>
+                        </el-row>
+                        <el-row :gutter="20" v-show="!temp.successParsed">
+                            <el-col :span="2">&nbsp;</el-col>
+                            <el-col :span="20" style="text-align: center">
+                                <el-form ref="form" :model="form" label-width="80px">
+                                    <el-form-item label="豆瓣链接">
+                                        <el-input v-model="form.url"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="html" v-show="false">
+                                        <el-input type="textarea" v-model="form.html"
+                                                  :autosize="{ minRows: 4, maxRows: 8}"></el-input>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-button size="small" type="primary" @click="onParse">解析</el-button>
+                                        <el-button size="small" @click="onReset()">重置</el-button>
+                                    </el-form-item>
+                                </el-form>
+                            </el-col>
+                            <el-col :span="2">&nbsp;</el-col>
+                        </el-row>
+                    </el-row>
+                </el-tab-pane>
+                <el-tab-pane label="媒体列表" name="page">
+                    <el-row style="margin-top: 25px;">
+                        <el-row :gutter="20">
+                            <el-col :span="2">&nbsp;</el-col>
+                            <el-col :span="20">
+                                <el-table
+                                        @current-change="selectTableRow"
+                                        :data="queryPageTemp.tableData"
+                                        style="width: 100%">
+                                    <el-table-column
+                                            prop="name"
+                                            label="名称"
+                                            width="180">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="otherName"
+                                            width="250"
+                                            label="又名">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="year"
+                                            label="年份">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="publishDate"
+                                            label="上映日期">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="country"
+                                            label="国家/地区"
+                                            width="100">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="language"
+                                            label="语言">
+                                    </el-table-column>
+                                    <el-table-column label="片长">
+                                        <template slot-scope="scope">{{ scope.row.length }} 分钟</template>
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="douBanScore"
+                                            label="豆瓣评分">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="imdbId"
+                                            width="100"
+                                            label="IMDb">
+                                    </el-table-column>
+                                </el-table>
+                                <div class="block" style="margin-top: 10px;">
+                                    <el-pagination
+                                            background
+                                            @size-change="handleSizeChange"
+                                            @current-change="handleCurrentChange"
+                                            layout="sizes, prev, pager, next"
+                                            :page-sizes="[20, 50, 100]"
+                                            :page-size="queryPageTemp.pageSize"
+                                            :total="queryPageTemp.total">
+                                    </el-pagination>
+                                </div>
+                            </el-col>
+                            <el-col :span="2">&nbsp;</el-col>
+                        </el-row>
+                    </el-row>
+                </el-tab-pane>
+            </el-tabs>
         </el-col>
         <el-col :span="2">&nbsp;</el-col>
     </el-row>
-    <el-row :gutter="20" v-show="!temp.successParsed">
-        <el-col :span="2">&nbsp;</el-col>
-        <el-col :span="20" style="text-align: center">
-            <el-form ref="form" :model="form" label-width="80px">
-                <el-form-item label="豆瓣链接">
-                    <el-input v-model="form.url"></el-input>
-                </el-form-item>
-                <el-form-item label="html" v-show="false">
-                    <el-input type="textarea" v-model="form.html" :autosize="{ minRows: 4, maxRows: 8}"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button size="small" type="primary" @click="onParse">解析</el-button>
-                    <el-button size="small" @click="onReset()">重置</el-button>
-                </el-form-item>
-            </el-form>
-        </el-col>
-        <el-col :span="2">&nbsp;</el-col>
-    </el-row>
+
 </div>
 </body>
 <!-- import Vue before Element -->
@@ -161,7 +252,8 @@
                 temp: {
                     successParsed: false,
                     url: '',
-                    html: ''
+                    html: '',
+                    activeName: 'parse'
                 },
                 form: {
                     html: ''
@@ -186,10 +278,65 @@
                     description: '',
                     douBanScore: 0,
                     douBanTop250No: ''
+                },
+                queryPageTemp: {
+                    total: 0,
+                    pageSize: 20,
+                    currentPage: 1,
+                    tableData: []
+                },
+                queryPageForm: {
+                    name: ''
                 }
             }
         },
         methods: {
+            selectTableRow(row) {
+                axios.post('./api/mediaInfo/detail', {
+                    id: row.id
+                }).then(response => {
+                    if (response.data.code === 0) {
+                        this.$message.success(response.data.msg);
+                    } else {
+                        this.$message.success(response.data.msg);
+                    }
+                })
+                .catch(function (error) {
+                    this.$message.error('网络异常');
+                    console.log(error);
+                });
+            },
+            queryPage() {
+                axios.post('./api/mediaInfo/page', {
+                    page: this.queryPageTemp.currentPage,
+                    limit: this.queryPageTemp.pageSize,
+                    param: this.queryPageForm
+                }).then(response => {
+                        if (response.data.code === 0) {
+                            this.queryPageTemp.total = response.data.data.count;
+                            this.queryPageTemp.tableData = response.data.data.list;
+                        } else {
+                            this.$message.success(response.data.msg);
+                        }
+                    })
+                    .catch(function (error) {
+                        this.$message.error('网络异常');
+                        console.log(error);
+                    });
+            },
+            handleSizeChange(pageSize) {
+                this.queryPageTemp.pageSize = pageSize;
+                this.queryPage();
+            },
+            handleCurrentChange(currentPage) {
+                this.queryPageTemp.currentPage = currentPage;
+                this.queryPage();
+            },
+            handleClick(tab, event) {
+                if('page' === tab.name) {
+                    this.queryPage();
+                }
+            },
             initForm2() {
                 this.form2.mediaTypeEnum = ''
                 this.form2.html = ''
@@ -231,9 +378,11 @@
                 this.form.url = url;
             },
             onSave() {
+                let success = false;
                 axios.post('./api/saveOrUpdate', this.form2)
                     .then(response => {
                         if (response.data.code === 0) {
+                            success = true;
                             this.$message.success(response.data.msg);
                         } else {
                             this.$message.success(response.data.msg);
@@ -243,6 +392,12 @@
                         this.$message.error('网络异常');
                         console.log(error);
                     });
+                if(success) {
+                    this.temp.activeName = 'page';
+                    this.queryPage();
+                    this.onResetForSave();
+                    this.onReset();
+                }
             },
             onParse() {
                 if (this.form.url === '') {
@@ -254,39 +409,39 @@
                     url: this.form.url
                 }).then(response => {
                     let resp = response.data.data;
-                        if (response.data.code === 0) {
-                            this.form2.name = resp.name;
-                            this.form2.mediaTypeEnum = resp.mediaTypeEnum;
-                            this.form2.year = resp.year;
-                            this.form2.publishDate = resp.publishDate;
-                            this.form2.country = resp.country;
-                            this.form2.language = resp.language;
-                            this.form2.length = resp.length;
-                            this.form2.otherName = resp.otherName;
-                            this.form2.imdbId = resp.imdbId;
-                            this.form2.episodes = resp.episodes;
-                            this.form2.genreList = resp.genreList;
-                            this.form2.directorList = resp.directorList;
-                            this.form2.authorList = resp.authorList;
-                            this.form2.actorList = resp.actorList;
-                            this.form2.imageBase64 = resp.imageBase64;
-                            this.form2.imageUrl = resp.imageUrl;
-                            this.form2.description = resp.description;
-                            this.form2.douBanScore = resp.douBanScore;
-                            this.form2.episodes = resp.episodes;
-                            this.form2.douBanTop250No = resp.douBanTop250No;
-                            this.form2.url = resp.url;
-                            this.temp.successParsed = true;
-                            this.temp.html = this.form.html;
-                            this.temp.url = this.form.url;
-                        } else {
-                            this.$message.error(response.data.msg);
-                        }
-                    })
-                    .catch(function (error) {
-                        this.$message.error('网络异常');
-                        console.log(error);
-                    });
+                    if (response.data.code === 0) {
+                        this.form2.name = resp.name;
+                        this.form2.mediaTypeEnum = resp.mediaTypeEnum;
+                        this.form2.year = resp.year;
+                        this.form2.publishDate = resp.publishDate;
+                        this.form2.country = resp.country;
+                        this.form2.language = resp.language;
+                        this.form2.length = resp.length;
+                        this.form2.otherName = resp.otherName;
+                        this.form2.imdbId = resp.imdbId;
+                        this.form2.episodes = resp.episodes;
+                        this.form2.genreList = resp.genreList;
+                        this.form2.directorList = resp.directorList;
+                        this.form2.authorList = resp.authorList;
+                        this.form2.actorList = resp.actorList;
+                        this.form2.imageBase64 = resp.imageBase64;
+                        this.form2.imageUrl = resp.imageUrl;
+                        this.form2.description = resp.description;
+                        this.form2.douBanScore = resp.douBanScore;
+                        this.form2.episodes = resp.episodes;
+                        this.form2.douBanTop250No = resp.douBanTop250No;
+                        this.form2.url = resp.url;
+                        this.temp.successParsed = true;
+                        this.temp.html = this.form.html;
+                        this.temp.url = this.form.url;
+                    } else {
+                        this.$message.error(response.data.msg);
+                    }
+                })
+                .catch(function (error) {
+                    this.$message.error('网络异常');
+                    console.log(error);
+                });
 
             }
         }

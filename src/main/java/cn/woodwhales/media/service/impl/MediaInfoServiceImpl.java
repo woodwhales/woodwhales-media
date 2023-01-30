@@ -3,11 +3,20 @@ package cn.woodwhales.media.service.impl;
 import cn.woodwhales.common.business.DataTool;
 import cn.woodwhales.common.business.collection.CollectionMathResult;
 import cn.woodwhales.common.model.result.OpResult;
+import cn.woodwhales.common.model.vo.PageRespVO;
+import cn.woodwhales.common.model.vo.RespVO;
+import cn.woodwhales.common.mybatisplus.MybatisPlusExecutor;
 import cn.woodwhales.media.entity.*;
 import cn.woodwhales.media.mapper.MediaInfoMapper;
 import cn.woodwhales.media.model.dto.MediaInfoDto;
 import cn.woodwhales.media.model.dto.MediaPersonDto;
 import cn.woodwhales.media.model.enums.MediaPersonTypeEnum;
+import cn.woodwhales.media.model.param.MediaInfoDetailParam;
+import cn.woodwhales.media.model.param.MediaInfoPageParam;
+import cn.woodwhales.media.model.param.PageParam;
+import cn.woodwhales.media.model.resp.MediaInfoDetailVo;
+import cn.woodwhales.media.model.resp.MediaInfoPageVo;
+import cn.woodwhales.media.util.BeanTool;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -191,4 +200,16 @@ public class MediaInfoServiceImpl extends ServiceImpl<MediaInfoMapper, MediaInfo
         return allGenreList;
     }
 
+    public RespVO<PageRespVO<MediaInfoPageVo>> queryPage(PageParam<MediaInfoPageParam> pageParam) {
+        return MybatisPlusExecutor.page(this, pageParam, wrapper -> {
+            wrapper.like(MediaInfo::getName, pageParam.getParam().getName());
+        }, info -> BeanTool.copy(info, MediaInfoPageVo::new));
+
+    }
+
+    public OpResult<MediaInfoDetailVo> detail(MediaInfoDetailParam param) {
+        MediaInfo info = this.getById(param.getId());
+        MediaInfoDetailVo vo = BeanTool.copy(info, MediaInfoDetailVo::new);
+        return OpResult.success(vo);
+    }
 }

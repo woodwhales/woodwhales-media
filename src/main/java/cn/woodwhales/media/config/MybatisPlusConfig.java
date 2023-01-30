@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @EnableTransactionManagement
 @Configuration
-@MapperScan("cn.woodwhales.media.mapper*")
+@MapperScan("cn.woodwhales.media.mapper**")
 public class MybatisPlusConfig {
 
     @Bean

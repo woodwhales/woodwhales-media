@@ -15,3 +15,6 @@ spring:
     # driver-class-name: com.mysql.jdbc.Driver
     username: root
     password: root1234
+logging:
+  level:
+    cn.woodwhales.media: debug
