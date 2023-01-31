@@ -66,6 +66,9 @@ public class DouBanInfoDto {
     private String runtime;
 
     public Integer letYear() {
+        if(StringUtils.isBlank(this.datePublished)) {
+            return null;
+        }
         return Integer.parseInt(DateFormatUtils.format(DateUtil.parse(this.datePublished), "yyyy"));
     }
 
