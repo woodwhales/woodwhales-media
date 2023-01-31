@@ -7,6 +7,10 @@ import cn.woodwhales.common.util.JsonTool;
 import cn.woodwhales.media.model.dto.MediaInfoDto;
 import cn.woodwhales.media.model.param.ParseParam;
 import cn.woodwhales.media.util.ImageTool;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -73,6 +77,21 @@ class DouBanParseMediaServiceImplTest {
     public void test4() {
         String imageBase64 = ImageTool.getImageBase64ByUrl("https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2886441838.webp");
         System.out.println("imageBase64 = " + imageBase64);
+    }
+
+    @Test
+    public void syncTop250() {
+        File file = new File("D:\\code\\woodwhales\\woodwhales-media\\doc\\豆瓣电影 Top 250.html");
+        String html = FileUtil.readString(file, StandardCharsets.UTF_8);
+        Document document = Jsoup.parse(html);
+        Elements elements = document.getElementsByClass("grid_view");
+        Element element = elements.get(0);
+        Elements items = element.select("div[class=hd]");
+        for (Element item : items) {
+            String url = item.getElementsByTag("a").get(0).attr("href");
+            String name = item.getElementsByTag("span").get(0).text();
+            System.out.println("name = " + name + ", url = " + url);
+        }
     }
 
 

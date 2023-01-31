@@ -379,7 +379,7 @@
             },
             onSave() {
                 let success = false;
-                axios.post('./api/saveOrUpdate', this.form2)
+                axios.post('./api/parse/saveOrUpdate', this.form2)
                     .then(response => {
                         if (response.data.code === 0) {
                             success = true;
@@ -404,7 +404,7 @@
                     this.$message.error('豆瓣链接不允许为空');
                     return;
                 }
-                axios.post('./api/parse', {
+                axios.post('./api/parse/parse', {
                     html: this.form.html,
                     url: this.form.url
                 }).then(response => {

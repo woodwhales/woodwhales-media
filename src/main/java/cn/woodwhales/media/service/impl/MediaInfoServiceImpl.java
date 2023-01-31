@@ -1,5 +1,7 @@
 package cn.woodwhales.media.service.impl;
 
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import cn.woodwhales.common.business.DataTool;
 import cn.woodwhales.common.business.collection.CollectionMathResult;
 import cn.woodwhales.common.model.result.OpResult;
@@ -17,10 +19,16 @@ import cn.woodwhales.media.model.param.PageParam;
 import cn.woodwhales.media.model.resp.MediaInfoDetailVo;
 import cn.woodwhales.media.model.resp.MediaInfoPageVo;
 import cn.woodwhales.media.util.BeanTool;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -211,5 +219,27 @@ public class MediaInfoServiceImpl extends ServiceImpl<MediaInfoMapper, MediaInfo
         MediaInfo info = this.getById(param.getId());
         MediaInfoDetailVo vo = BeanTool.copy(info, MediaInfoDetailVo::new);
         return OpResult.success(vo);
+    }
+    
+    public OpResult<List<Pair<String, String>>> syncTop250() {
+        List<Pair<String, String>> top250Container = new ArrayList<>();
+        for (int i = 0; i < 250;) {
+            String linkUrl = String.format("https://movie.douban.com/top250?start=%s&filter=", i);
+            HttpRequest httpRequest = HttpRequest.get(linkUrl);
+            HttpResponse httpResponse = httpRequest.execute();
+            String html = httpResponse.body();
+            Document document = Jsoup.parse(html);
+            Elements elements = document.getElementsByClass("grid_view");
+            Element element = elements.get(0);
+            Elements items = element.select("div[class=hd]");
+            for (Element item : items) {
+                String url = item.getElementsByTag("a").get(0).attr("href");
+                String name = item.getElementsByTag("span").get(0).text();
+                top250Container.add(Pair.of(url, name));
+            }
+            i = i + 25;
+        }
+        log.info("top250Container = {}", JSON.toJSONString(top250Container));
+        return OpResult.success(top250Container);
     }
 }
