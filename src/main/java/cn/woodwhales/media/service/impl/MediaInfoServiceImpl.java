@@ -16,8 +16,10 @@ import cn.woodwhales.media.model.enums.MediaPersonTypeEnum;
 import cn.woodwhales.media.model.param.MediaInfoDetailParam;
 import cn.woodwhales.media.model.param.MediaInfoPageParam;
 import cn.woodwhales.media.model.param.PageParam;
+import cn.woodwhales.media.model.param.ParseParam;
 import cn.woodwhales.media.model.resp.MediaInfoDetailVo;
 import cn.woodwhales.media.model.resp.MediaInfoPageVo;
+import cn.woodwhales.media.service.ParseMediaService;
 import cn.woodwhales.media.util.BeanTool;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -221,7 +223,46 @@ public class MediaInfoServiceImpl extends ServiceImpl<MediaInfoMapper, MediaInfo
         MediaInfoDetailVo vo = BeanTool.copy(info, MediaInfoDetailVo::new);
         return OpResult.success(vo);
     }
-    
+
+    @Autowired
+    private ParseMediaService parseMediaService;
+
+    /**
+     * 同步 top250
+     * 调用太频繁会被豆瓣限制IP
+     * @return
+     */
+    public OpResult<Void> syncTop2() {
+        List<Pair<String, String>> errorList = new ArrayList<>();
+        OpResult<List<Pair<String, String>>> opResult = this.syncTop250();
+        List<Pair<String, String>> dataList = opResult.getData();
+        for (Pair<String, String> pair : dataList) {
+            try {
+                log.info("==> 同步：name={}, url={}", pair.getRight(), pair.getLeft());
+                MediaInfo one = this.getOne(Wrappers.<MediaInfo>lambdaQuery()
+                        .eq(MediaInfo::getUrl, pair.getLeft()));
+                if(Objects.isNull(one)) {
+                    String url = pair.getKey();
+                    ParseParam parseParam = new ParseParam();
+                    parseParam.setUrl(url);
+                    OpResult<MediaInfoDto> opResult2 = parseMediaService.parseMovie(parseParam);
+                    MediaInfoDto mediaInfoDto = opResult2.getData();
+                    this.saveOrUpdate(mediaInfoDto);
+                }
+            } catch (Exception e) {
+                errorList.add(pair);
+                log.info("==> 同步失败：name={}, url={}, errorMsg={}", pair.getRight(), pair.getLeft(), e.getMessage(), e);
+            }
+        }
+        log.error("errorList={}", JSON.toJSONString(errorList));
+        return OpResult.success();
+    }
+
+    /**
+     * 获取top250
+     * 调用太频繁会被豆瓣限制IP
+     * @return
+     */
     public OpResult<List<Pair<String, String>>> syncTop250() {
         List<Pair<String, String>> top250Container = new ArrayList<>();
         for (int i = 0; i < 250;) {

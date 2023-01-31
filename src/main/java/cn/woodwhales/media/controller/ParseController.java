@@ -48,4 +48,10 @@ public class ParseController {
         return RespVO.resp(mediaInfoServiceImpl.syncTop250());
     }
 
+    @GetMapping("/syncTop2")
+    public RespVO<Void> syncTop2() {
+        mediaInfoServiceImpl.syncTop2();
+        return RespVO.success();
+    }
+
 }
