@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -70,6 +71,10 @@ public class MediaInfoServiceImpl extends ServiceImpl<MediaInfoMapper, MediaInfo
             mediaInfo.setCreateTime(now);
         }
         BeanUtils.copyProperties(mediaInfoDto, mediaInfo);
+        if(StringUtils.isNotBlank(mediaInfo.getDouBanTop250No())) {
+            Integer douBanTop250NoValue = Integer.parseInt(StringUtils.substringAfter(mediaInfo.getDouBanTop250No(), "No."));
+            mediaInfo.setDouBanTop250NoValue(douBanTop250NoValue);
+        }
         mediaInfo.setUpdateTime(now);
         mediaInfo.setMediaTypeEnum(mediaInfoDto.getMediaTypeEnum().name());
         this.saveOrUpdate(mediaInfo);

@@ -117,6 +117,12 @@ public class MediaInfo implements Serializable {
     private String douBanTop250No;
 
     /**
+     * 豆瓣Top250排名数值
+     */
+    @TableField(value = "dou_ban_top250_no_value")
+    private Integer douBanTop250NoValue;
+
+    /**
      * 又名
      */
     @TableField(value = "other_name")
