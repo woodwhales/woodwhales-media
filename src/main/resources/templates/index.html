@@ -32,7 +32,7 @@
                                 <el-form ref="form2" :model="form2" label-width="80px">
                                     <el-row :gutter="20">
                                         <el-col :span="18">
-                                            <el-form-item label="电影名称">
+                                            <el-form-item label="影视名称">
                                                 <el-input v-model="form2.name"></el-input>
                                             </el-form-item>
                                             <el-form-item label="上映时间">
@@ -174,61 +174,74 @@
                         <el-row :gutter="20">
                             <el-col :span="2">&nbsp;</el-col>
                             <el-col :span="20">
-                                <el-table
-                                        @current-change="selectTableRow"
-                                        :data="queryPageTemp.tableData"
-                                        style="width: 100%">
-                                    <el-table-column
-                                            prop="name"
-                                            label="名称"
-                                            width="180">
-                                    </el-table-column>
-                                    <el-table-column
-                                            prop="otherName"
-                                            width="250"
-                                            label="又名">
-                                    </el-table-column>
-                                    <el-table-column
-                                            prop="year"
-                                            label="年份">
-                                    </el-table-column>
-                                    <el-table-column
-                                            prop="publishDate"
-                                            label="上映日期">
-                                    </el-table-column>
-                                    <el-table-column
-                                            prop="country"
-                                            label="国家/地区"
-                                            width="100">
-                                    </el-table-column>
-                                    <el-table-column
-                                            prop="language"
-                                            label="语言">
-                                    </el-table-column>
-                                    <el-table-column label="片长">
-                                        <template slot-scope="scope">{{ scope.row.length }} 分钟</template>
-                                    </el-table-column>
-                                    <el-table-column
-                                            prop="douBanScore"
-                                            label="豆瓣评分">
-                                    </el-table-column>
-                                    <el-table-column
-                                            prop="imdbId"
-                                            width="100"
-                                            label="IMDb">
-                                    </el-table-column>
-                                </el-table>
-                                <div class="block" style="margin-top: 10px;">
-                                    <el-pagination
-                                            background
-                                            @size-change="handleSizeChange"
-                                            @current-change="handleCurrentChange"
-                                            layout="sizes, prev, pager, next"
-                                            :page-sizes="[20, 50, 100]"
-                                            :page-size="queryPageTemp.pageSize"
-                                            :total="queryPageTemp.total">
-                                    </el-pagination>
-                                </div>
+                                <el-row>
+                                    <el-form ref="form" :model="queryPageForm" label-width="80px">
+                                        <el-form-item label="影视名称">
+                                            <el-input v-model="queryPageForm.name"></el-input>
+                                        </el-form-item>
+                                        <el-form-item>
+                                            <el-button size="small" type="primary" @click="onQuery">搜索</el-button>
+                                            <el-button size="small" @click="resetQuery">重置</el-button>
+                                        </el-form-item>
+                                    </el-form>
+                                </el-row>
+                                <el-row>
+                                    <el-table
+                                            @current-change="selectTableRow"
+                                            :data="queryPageTemp.tableData"
+                                            style="width: 100%">
+                                        <el-table-column
+                                                prop="name"
+                                                label="名称"
+                                                width="180">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="otherName"
+                                                width="250"
+                                                label="又名">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="year"
+                                                label="年份">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="publishDate"
+                                                label="上映日期">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="country"
+                                                label="国家/地区"
+                                                width="100">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="language"
+                                                label="语言">
+                                        </el-table-column>
+                                        <el-table-column label="片长">
+                                            <template slot-scope="scope">{{ scope.row.length }} 分钟</template>
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="douBanScore"
+                                                label="豆瓣评分">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="imdbId"
+                                                width="100"
+                                                label="IMDb">
+                                        </el-table-column>
+                                    </el-table>
+                                    <div class="block" style="margin-top: 10px;">
+                                        <el-pagination
+                                                background
+                                                @size-change="handleSizeChange"
+                                                @current-change="handleCurrentChange"
+                                                layout="sizes, prev, pager, next"
+                                                :page-sizes="[20, 50, 100]"
+                                                :page-size="queryPageTemp.pageSize"
+                                                :total="queryPageTemp.total">
+                                        </el-pagination>
+                                    </div>
+                                </el-row>
                             </el-col>
                             <el-col :span="2">&nbsp;</el-col>
                         </el-row>
@@ -293,6 +306,13 @@
             }
         },
         methods: {
+            resetQuery() {
+                this.queryPageForm.name = '';
+                this.queryPage();
+            },
+            onQuery() {
+                this.queryPage();
+            },
             selectTableRow(row) {
                 axios.post('./api/mediaInfo/detail', {
                     id: row.id
