@@ -39,6 +39,11 @@ public enum MediaTypeEnum {
     }
 
     private static Map<Integer, MediaTypeEnum> map = DataTool.enumMap(MediaTypeEnum.class, MediaTypeEnum::getCode);
+    private static Map<String, MediaTypeEnum> nameMap = DataTool.enumMap(MediaTypeEnum.class, MediaTypeEnum::name);
+
+    public static String getDescByName(String name) {
+        return nameMap.containsKey(name) ? nameMap.get(name).getDesc() : "";
+    }
 
     public static String getDescByCode(Integer code) {
         return map.containsKey(code) ? map.get(code).getDesc() : null;

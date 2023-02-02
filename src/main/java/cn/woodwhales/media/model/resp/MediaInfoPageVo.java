@@ -1,5 +1,6 @@
 package cn.woodwhales.media.model.resp;
 
+import cn.woodwhales.media.model.enums.MediaTypeEnum;
 import lombok.Data;
 
 /**
@@ -26,8 +27,14 @@ public class MediaInfoPageVo {
 
     /**
      * 媒体类型
+     * @see cn.woodwhales.media.model.enums.MediaTypeEnum
      */
     private String mediaTypeEnum;
+
+    /**
+     * 媒体类型名称
+     */
+    private String mediaTypeName;
 
     /**
      * 豆瓣链接
@@ -104,4 +111,7 @@ public class MediaInfoPageVo {
      */
     private String description;
 
+    public String getMediaTypeName() {
+        return MediaTypeEnum.getDescByName(this.mediaTypeEnum);
+    }
 }
