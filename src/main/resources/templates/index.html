@@ -399,19 +399,7 @@
                 });
             },
             onUpdate(row) {
-                axios.post('./api/mediaInfo/update', {
-                    id: row.id
-                }).then(response => {
-                    if (response.data.code === 0) {
-                        this.$message.success(response.data.msg);
-                    } else {
-                        this.$message.success(response.data.msg);
-                    }
-                })
-                .catch(function (error) {
-                    this.$message.error('网络异常');
-                    console.log(error);
-                });
+                console.log('onUpdate', row);
             },
             handleSizeChange(pageSize) {
                 this.queryPageTemp.pageSize = pageSize;
