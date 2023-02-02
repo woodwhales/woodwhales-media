@@ -13,10 +13,7 @@ import cn.woodwhales.media.mapper.MediaInfoMapper;
 import cn.woodwhales.media.model.dto.MediaInfoDto;
 import cn.woodwhales.media.model.dto.MediaPersonDto;
 import cn.woodwhales.media.model.enums.MediaPersonTypeEnum;
-import cn.woodwhales.media.model.param.MediaInfoDetailParam;
-import cn.woodwhales.media.model.param.MediaInfoPageParam;
-import cn.woodwhales.media.model.param.PageParam;
-import cn.woodwhales.media.model.param.ParseParam;
+import cn.woodwhales.media.model.param.*;
 import cn.woodwhales.media.model.resp.MediaInfoDetailVo;
 import cn.woodwhales.media.model.resp.MediaInfoPageVo;
 import cn.woodwhales.media.service.ParseMediaService;
@@ -288,5 +285,20 @@ public class MediaInfoServiceImpl extends ServiceImpl<MediaInfoMapper, MediaInfo
         }
         log.info("top250Container = {}", JSON.toJSONString(top250Container));
         return OpResult.success(top250Container);
+    }
+
+    public OpResult<Void> delete(MediaInfoDeleteParam param) {
+        MediaInfo mediaInfo = this.getById(param.getId());
+        if(Objects.isNull(mediaInfo)) {
+            return OpResult.success();
+        }
+        // 删除媒体类型关系
+        mediaGenreRelationInfoServiceImpl.remove(Wrappers.<MediaGenreRelationInfo>lambdaQuery()
+                .eq(MediaGenreRelationInfo::getMediaInfoId, mediaInfo.getId()));
+        // 删除媒体人物关系
+        mediaPersonRelationInfoServiceImpl.remove(Wrappers.<MediaPersonRelationInfo>lambdaQuery()
+                .eq(MediaPersonRelationInfo::getMediaInfoId, mediaInfo.getId()));
+        this.removeById(mediaInfo.getId());
+        return OpResult.success();
     }
 }

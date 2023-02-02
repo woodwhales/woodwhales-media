@@ -5,7 +5,6 @@ import cn.woodwhales.media.model.dto.MediaInfoDto;
 import cn.woodwhales.media.model.param.ParseParam;
 import cn.woodwhales.media.service.ParseMediaService;
 import cn.woodwhales.media.service.impl.MediaInfoServiceImpl;
-import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +34,6 @@ public class ParseController {
     @PostMapping("/parse")
     public RespVO<MediaInfoDto> parse(@RequestBody ParseParam param) {
         return RespVO.resp(parseMediaService.parseMovie(param));
-    }
-
-    @PostMapping("/saveOrUpdate")
-    public RespVO<Void> saveOrUpdate(@RequestBody MediaInfoDto mediaInfoDto) {
-        log.info("mediaInfoDto={}", JSON.toJSONString(mediaInfoDto));
-        return RespVO.resp(mediaInfoServiceImpl.saveOrUpdate(mediaInfoDto));
     }
 
     @GetMapping("/syncTop250")

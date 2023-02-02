@@ -186,9 +186,7 @@
                                     </el-form>
                                 </el-row>
                                 <el-row>
-                                    <el-table
-                                            @current-change="selectTableRow"
-                                            :data="queryPageTemp.tableData"
+                                    <el-table :data="queryPageTemp.tableData"
                                             style="width: 100%">
                                         <el-table-column
                                                 type="index"
@@ -232,6 +230,16 @@
                                                 prop="imdbId"
                                                 width="100"
                                                 label="IMDb">
+                                        </el-table-column>
+                                        <el-table-column
+                                                fixed="right"
+                                                label="操作"
+                                                width="150">
+                                            <template slot-scope="scope">
+                                                <el-link @click="onDetail(scope.row)" :underline="false" type="primary" size="mini">查看</el-link>
+                                                <el-link @click="onUpdate(scope.row)" :underline="false" type="success" size="mini">编辑</el-link>
+                                                <el-link @click="onDelete(scope.row)" :underline="false" type="danger" size="mini">删除</el-link>
+                                            </template>
                                         </el-table-column>
                                     </el-table>
                                     <div class="block" style="margin-top: 10px;">
@@ -350,6 +358,61 @@
                         console.log(error);
                     });
             },
+            onDetail(row) {
+                axios.post('./api/mediaInfo/detail', {
+                    id: row.id
+                }).then(response => {
+                    if (response.data.code === 0) {
+                        this.$message.success(response.data.msg);
+                    } else {
+                        this.$message.success(response.data.msg);
+                    }
+                })
+                .catch(function (error) {
+                    this.$message.error('网络异常');
+                    console.log(error);
+                });
+            },
+            onDelete(row) {
+                this.$confirm('是否确认删除?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    showClose: false
+                }).then(() => {
+                    axios.post('./api/mediaInfo/delete', {
+                        id: row.id
+                    }).then(response => {
+                        if (response.data.code === 0) {
+                            this.$message.success(response.data.msg);
+                            this.queryPage();
+                        } else {
+                            this.$message.success(response.data.msg);
+                        }
+                    })
+                    .catch(function (error) {
+                        this.$message.error('网络异常');
+                        console.log(error);
+                    });
+                }).catch(() => {
+
+                });
+            },
+            onUpdate(row) {
+                axios.post('./api/mediaInfo/update', {
+                    id: row.id
+                }).then(response => {
+                    if (response.data.code === 0) {
+                        this.$message.success(response.data.msg);
+                    } else {
+                        this.$message.success(response.data.msg);
+                    }
+                })
+                .catch(function (error) {
+                    this.$message.error('网络异常');
+                    console.log(error);
+                });
+            },
             handleSizeChange(pageSize) {
                 this.queryPageTemp.pageSize = pageSize;
                 this.queryPage();
@@ -407,7 +470,7 @@
                 this.form.url = url;
             },
             onSave() {
-                axios.post('./api/parse/saveOrUpdate', this.form2)
+                axios.post('./api/mediaInfo/saveOrUpdate', this.form2)
                     .then(response => {
                         if (response.data.code === 0) {
                             this.$message.success(response.data.msg);
