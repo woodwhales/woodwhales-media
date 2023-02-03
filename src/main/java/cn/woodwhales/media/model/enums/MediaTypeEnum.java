@@ -22,6 +22,10 @@ public enum MediaTypeEnum {
      * 电视剧
      */
     TV_SERIES(1, "电视剧"),
+    /**
+     * 记录片
+     */
+    DOCUMENTARY(2, "记录片"),
     ;
 
     /**

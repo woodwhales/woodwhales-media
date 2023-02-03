@@ -71,9 +71,6 @@ public class DouBanParseMediaServiceImpl implements ParseMediaService {
         // 上映时间
         String datePublished = jsonObject.get("datePublished").toString();
 
-        // 类型列表
-        List<String> genreList = JSONArray.parseObject(jsonObject.get("genre").toString(), List.class);
-
         // 剧情简介
         String description = "";
         Elements all = document.select("span[class='all hidden']");
@@ -117,6 +114,13 @@ public class DouBanParseMediaServiceImpl implements ParseMediaService {
         Elements douBanTop250NoElements = document.select("span[class='top250-no']");
         if(CollectionUtils.isNotEmpty(douBanTop250NoElements)) {
             douBanTop250No = douBanTop250NoElements.get(0).text();
+        }
+
+        // 类型列表
+        List<String> genreList = JSONArray.parseObject(jsonObject.get("genre").toString(), List.class);
+
+        if(genreList.contains("纪录片")) {
+            mediaTypeEnum = MediaTypeEnum.DOCUMENTARY;
         }
 
         // 豆瓣链接

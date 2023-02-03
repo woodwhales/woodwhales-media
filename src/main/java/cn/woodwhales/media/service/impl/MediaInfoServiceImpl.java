@@ -38,6 +38,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 /**
  * @author woodwhales on 2023-01-30 11:50
  */
@@ -68,7 +70,7 @@ public class MediaInfoServiceImpl extends ServiceImpl<MediaInfoMapper, MediaInfo
             mediaInfo.setCreateTime(now);
         }
         BeanUtils.copyProperties(mediaInfoDto, mediaInfo);
-        if(StringUtils.isNotBlank(mediaInfo.getDouBanTop250No())) {
+        if(isNotBlank(mediaInfo.getDouBanTop250No())) {
             Integer douBanTop250NoValue = Integer.parseInt(StringUtils.substringAfter(mediaInfo.getDouBanTop250No(), "No."));
             mediaInfo.setDouBanTop250NoValue(douBanTop250NoValue);
         }
@@ -214,7 +216,13 @@ public class MediaInfoServiceImpl extends ServiceImpl<MediaInfoMapper, MediaInfo
 
     public RespVO<PageRespVO<MediaInfoPageVo>> queryPage(PageParam<MediaInfoPageParam> pageParam) {
         return MybatisPlusExecutor.page(this, pageParam, wrapper -> {
-            wrapper.like(MediaInfo::getName, pageParam.getParam().getName());
+            if(isNotBlank(pageParam.getParam().getName()) || isNotBlank(pageParam.getParam().getName())) {
+                wrapper.and(wq -> {
+                            wq.like(isNotBlank(pageParam.getParam().getName()), MediaInfo::getName, pageParam.getParam().getName())
+                            .or()
+                            .like(isNotBlank(pageParam.getParam().getName()), MediaInfo::getOtherName, pageParam.getParam().getName());
+                });
+            }
             wrapper.orderByDesc(MediaInfo::getUpdateTime);
         }, info -> BeanTool.copy(info, MediaInfoPageVo::new));
 

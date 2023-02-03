@@ -194,25 +194,20 @@
                                                 width="40">
                                         </el-table-column>
                                         <el-table-column
-                                                label="类型"
-                                                width="90">
+                                                label="名称"
+                                                width="300">
                                             <template slot-scope="scope">
                                                 <el-tag :type="scope.row.mediaTypeName === '电视剧' ? 'primary' : 'success'" size="mini"
                                                         disable-transitions>{{scope.row.mediaTypeName}}</el-tag>
+                                                {{scope.row.name}}
+                                                <template v-if="scope.row.douBanTop250No != null && scope.row.douBanTop250No !== ''">
+                                                    <el-tag style="margin-left: 5px;" type="warning" size="mini">{{scope.row.douBanTop250No}}</el-tag>
+                                                </template>
                                             </template>
                                         </el-table-column>
                                         <el-table-column
-                                                type="index"
-                                                width="50">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="name"
-                                                label="名称"
-                                                width="180">
-                                        </el-table-column>
-                                        <el-table-column
                                                 prop="otherName"
-                                                width="250"
+                                                width="300"
                                                 label="又名">
                                         </el-table-column>
                                         <el-table-column
@@ -225,20 +220,22 @@
                                                 label="上映日期">
                                         </el-table-column>
                                         <el-table-column
+                                                prop="douBanScore"
+                                                label="豆瓣评分">
+                                        </el-table-column>
+                                        <el-table-column
                                                 prop="country"
                                                 label="国家/地区"
                                                 width="100">
                                         </el-table-column>
                                         <el-table-column
                                                 prop="language"
+                                                min-width="120"
+                                                :show-overflow-tooltip="true"
                                                 label="语言">
                                         </el-table-column>
                                         <el-table-column label="片长">
                                             <template slot-scope="scope">{{ scope.row.length }} 分钟</template>
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="douBanScore"
-                                                label="豆瓣评分">
                                         </el-table-column>
                                         <el-table-column
                                                 prop="imdbId"
@@ -331,7 +328,19 @@
                 }
             }
         },
+        mounted() {
+            this.queryPage();
+        },
         methods: {
+            isValidHttpUrl(string) {
+                let url;
+                try {
+                    url = new URL(string);
+                } catch (_) {
+                    return false;
+                }
+                return url.protocol === "http:" || url.protocol === "https:";
+            },
             resetQuery() {
                 this.queryPageForm.name = '';
                 this.queryPage();
@@ -494,6 +503,11 @@
                     this.$message.error('豆瓣链接不允许为空');
                     return;
                 }
+                if(!this.isValidHttpUrl(this.form.url)) {
+                    this.$message.error('豆瓣链接不正确');
+                    return;
+                }
+
                 this.temp.loading = true;
                 axios.post('./api/parse/parse', {
                     html: this.form.html,
