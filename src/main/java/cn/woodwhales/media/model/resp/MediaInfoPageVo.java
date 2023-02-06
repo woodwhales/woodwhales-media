@@ -32,6 +32,11 @@ public class MediaInfoPageVo {
     private String mediaTypeEnum;
 
     /**
+     * 媒体类型样式
+     */
+    private String mediaTypeClass;
+
+    /**
      * 媒体类型名称
      */
     private String mediaTypeName;

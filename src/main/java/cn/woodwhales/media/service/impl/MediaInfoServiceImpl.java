@@ -13,6 +13,7 @@ import cn.woodwhales.media.mapper.MediaInfoMapper;
 import cn.woodwhales.media.model.dto.MediaInfoDto;
 import cn.woodwhales.media.model.dto.MediaPersonDto;
 import cn.woodwhales.media.model.enums.MediaPersonTypeEnum;
+import cn.woodwhales.media.model.enums.MediaTypeEnum;
 import cn.woodwhales.media.model.param.*;
 import cn.woodwhales.media.model.resp.MediaInfoDetailVo;
 import cn.woodwhales.media.model.resp.MediaInfoPageVo;
@@ -224,8 +225,11 @@ public class MediaInfoServiceImpl extends ServiceImpl<MediaInfoMapper, MediaInfo
                 });
             }
             wrapper.orderByDesc(MediaInfo::getUpdateTime);
-        }, info -> BeanTool.copy(info, MediaInfoPageVo::new));
-
+        }, info -> {
+            MediaInfoPageVo vo = BeanTool.copy(info, MediaInfoPageVo::new);
+            vo.setMediaTypeClass(MediaTypeEnum.getClassForUiBy(vo.getMediaTypeEnum()));
+            return vo;
+        } );
     }
 
     public OpResult<MediaInfoDetailVo> detail(MediaInfoDetailParam param) {
