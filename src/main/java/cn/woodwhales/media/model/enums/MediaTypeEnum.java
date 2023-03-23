@@ -25,7 +25,7 @@ public enum MediaTypeEnum {
     /**
      * 记录片
      */
-    DOCUMENTARY(2, "记录片", "info"),
+    DOCUMENTARY(2, "记录片", "warning"),
     ;
 
     /**

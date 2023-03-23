@@ -224,6 +224,7 @@ public class MediaInfoServiceImpl extends ServiceImpl<MediaInfoMapper, MediaInfo
                             .like(isNotBlank(pageParam.getParam().getName()), MediaInfo::getOtherName, pageParam.getParam().getName());
                 });
             }
+            wrapper.in(CollectionUtils.isNotEmpty(pageParam.getParam().getMediaTypeList()), MediaInfo::getMediaTypeEnum, pageParam.getParam().getMediaTypeList());
             wrapper.orderByDesc(MediaInfo::getUpdateTime);
         }, info -> {
             MediaInfoPageVo vo = BeanTool.copy(info, MediaInfoPageVo::new);

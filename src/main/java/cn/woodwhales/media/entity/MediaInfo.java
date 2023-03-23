@@ -46,6 +46,7 @@ public class MediaInfo implements Serializable {
 
     /**
      * 媒体类型
+     * @see cn.woodwhales.media.model.enums.MediaTypeEnum
      */
     @TableField(value = "media_type_enum")
     private String mediaTypeEnum;

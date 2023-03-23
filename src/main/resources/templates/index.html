@@ -179,6 +179,13 @@
                                         <el-form-item label="影视名称">
                                             <el-input v-model="queryPageForm.name"></el-input>
                                         </el-form-item>
+                                        <el-form-item label="影视类型">
+                                            <el-checkbox-group v-model="queryPageForm.mediaTypeList">
+                                                <el-checkbox label="MOVIE" name="mediaTypeList">电影</el-checkbox>
+                                                <el-checkbox label="TV_SERIES" name="mediaTypeList">电视剧</el-checkbox>
+                                                <el-checkbox label="DOCUMENTARY" name="mediaTypeList">记录片</el-checkbox>
+                                            </el-checkbox-group>
+                                        </el-form-item>
                                         <el-form-item style="text-align: right;">
                                             <el-button size="small" type="primary" @click="onQuery">搜索</el-button>
                                             <el-button size="small" @click="resetQuery">重置</el-button>
@@ -324,7 +331,8 @@
                     tableData: []
                 },
                 queryPageForm: {
-                    name: ''
+                    name: '',
+                    mediaTypeList: []
                 }
             }
         },
@@ -343,6 +351,7 @@
             },
             resetQuery() {
                 this.queryPageForm.name = '';
+                this.queryPageForm.mediaTypeList = [];
                 this.queryPage();
             },
             onQuery() {
@@ -364,6 +373,7 @@
                 });
             },
             queryPage() {
+                console.log(JSON.stringify(this.queryPageForm));
                 axios.post('./api/mediaInfo/page', {
                     page: this.queryPageTemp.currentPage,
                     limit: this.queryPageTemp.pageSize,
