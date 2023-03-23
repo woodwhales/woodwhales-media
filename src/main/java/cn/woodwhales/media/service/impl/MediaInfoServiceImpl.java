@@ -217,7 +217,7 @@ public class MediaInfoServiceImpl extends ServiceImpl<MediaInfoMapper, MediaInfo
 
     public RespVO<PageRespVO<MediaInfoPageVo>> queryPage(PageParam<MediaInfoPageParam> pageParam) {
         return MybatisPlusExecutor.page(this, pageParam, wrapper -> {
-            if(isNotBlank(pageParam.getParam().getName()) || isNotBlank(pageParam.getParam().getName())) {
+            if(isNotBlank(pageParam.getParam().getName())) {
                 wrapper.and(wq -> {
                             wq.like(isNotBlank(pageParam.getParam().getName()), MediaInfo::getName, pageParam.getParam().getName())
                             .or()
