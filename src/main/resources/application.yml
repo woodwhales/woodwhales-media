@@ -18,3 +18,5 @@ spring:
 logging:
   level:
     cn.woodwhales.media: debug
+  file:
+    path: /data/woodwhales-media/

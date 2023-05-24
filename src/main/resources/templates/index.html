@@ -352,9 +352,11 @@
             resetQuery() {
                 this.queryPageForm.name = '';
                 this.queryPageForm.mediaTypeList = [];
+                this.queryPageTemp.currentPage = 1;
                 this.queryPage();
             },
             onQuery() {
+                this.queryPageTemp.currentPage = 1;
                 this.queryPage();
             },
             selectTableRow(row) {
@@ -373,7 +375,6 @@
                 });
             },
             queryPage() {
-                console.log(JSON.stringify(this.queryPageForm));
                 axios.post('./api/mediaInfo/page', {
                     page: this.queryPageTemp.currentPage,
                     limit: this.queryPageTemp.pageSize,
